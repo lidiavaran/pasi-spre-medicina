@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<!DOCTYPE html>
+	<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>Editare Lecție | Pași spre Medicină</title>
+	    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+	    <style>
+	        :root { --visiniu: #800020; --alb: #ffffff; }
+	        body { 
+	            font-family: 'Poppins', sans-serif; 
+	            margin: 0; 
+	            background-color: var(--alb); 
+	            display: flex; 
+	            flex-direction: column; 
+	            align-items: center; 
+	            min-height: 100vh;
+	        }
+
+	        nav {
+	            background-color: var(--visiniu);
+	            height: 70px;
+	            width: 100%;
+	            display: flex;
+	            align-items: center;
+	            padding: 0 5%;
+	            box-sizing: border-box;
+	            position: fixed;
+	            top: 0;
+	        }
+
+	        .logo-nav { height: 50px; }
+
+	        .main-content { padding: 120px 20px 50px; width: 100%; max-width: 600px; }
+
+	        h1 { 
+	            color: var(--visiniu); 
+	            font-family: 'Montserrat', sans-serif;
+	            font-size: 2.5rem; 
+	            font-weight: 800;
+	            text-transform: uppercase;
+	            letter-spacing: 2px;
+	            text-align: center;
+	            margin-bottom: 40px;
+	        }
+
+	        .edit-card {
+	            background: white;
+	            padding: 40px;
+	            border-radius: 24px;
+	            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+	            border: 1px solid #f0f0f0;
+	        }
+
+	        label {
+	            font-weight: 600;
+	            color: var(--visiniu);
+	            text-transform: uppercase;
+	            font-size: 0.8rem;
+	            letter-spacing: 1px;
+	            margin-bottom: 8px;
+	            display: block;
+	        }
+
+	        input, textarea {
+	            width: 100%;
+	            padding: 15px;
+	            margin-bottom: 25px;
+	            border-radius: 12px;
+	            border: 1px solid #ddd;
+	            font-family: 'Poppins', sans-serif;
+	            box-sizing: border-box;
+	        }
+
+	        .btn-save {
+	            background-color: var(--visiniu);
+	            color: white;
+	            border: none;
+	            padding: 18px;
+	            border-radius: 15px;
+	            font-weight: 800;
+	            text-transform: uppercase;
+	            width: 100%;
+	            cursor: pointer;
+	            transition: 0.3s;
+	            letter-spacing: 1px;
+	        }
+
+	        .btn-save:hover { transform: scale(1.02); background: #600018; }
+
+	        .link-cancel {
+	            display: block;
+	            text-align: center;
+	            margin-top: 20px;
+	            color: #888;
+	            text-decoration: none;
+	            font-weight: 600;
+	            font-size: 0.9rem;
+	        }
+	    </style>
+	</head>
+	<body>
+
+	    <nav><img src="/images/logo.png" alt="Logo" class="logo-nav"></nav>
+
+	    <div class="main-content">
+	        <h1>Editează Lecția</h1>
+
+	        <div class="edit-card">
+	            <form th:action="@{/mentor/update-lectie-detalii}" method="post">
+	                <input type="hidden" name="lectieId" th:value="${lectie.id}">
+	                
+	                <label>Titlu Lecție</label>
+	                <input type="text" name="numeNou" th:value="${lectie.titlu}" required>
+	                
+	                <label>Link Material (Drive/Zoom)</label>
+	                <input type="url" name="link" th:value="${lectie.linkMaterial}">
+	                
+	                <button type="submit" class="btn-save">Salvează Modificările</button>
+	                <a href="/mentor/dashboard" class="link-cancel">Anulează și revino</a>
+	            </form>
+	        </div>
+	    </div>
+
+	</body>
+	</html>

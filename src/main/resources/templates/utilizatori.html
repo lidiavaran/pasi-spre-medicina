@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestiune Utilizatori - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f4f4f4; margin: 0; display: flex; }
+        .sidebar { width: 250px; background: #800020; color: white; min-height: 100vh; padding: 20px; position: fixed; }
+        .sidebar h3 { border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px; }
+        .sidebar a { display: block; color: white; text-decoration: none; margin-bottom: 15px; padding: 10px; border-radius: 5px; transition: 0.3s; }
+        .sidebar a:hover { background: rgba(255,255,255,0.1); padding-left: 15px; }
+        .sidebar a.active { background: rgba(255,255,255,0.2); font-weight: 600; }
+        
+        .main { flex: 1; padding: 40px; margin-left: 250px; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        th { background: #800020; color: white; padding: 15px; text-align: left; }
+        td { padding: 15px; border-bottom: 1px solid #eee; }
+        
+        .badge { padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .badge-elev { background: #e1f5fe; color: #0288d1; }
+        .badge-mentor { background: #e8f5e9; color: #2e7d32; }
+        .badge-admin { background: #ffebee; color: #c62828; }
+        
+        .btn-action { text-decoration: none; font-weight: bold; font-size: 0.9rem; padding: 5px 10px; border-radius: 4px; transition: 0.2s; }
+        .btn-delete { color: #e74c3c; border: 1px solid transparent; }
+        .btn-delete:hover { background: #fdf2f2; border: 1px solid #e74c3c; }
+        .btn-promote { color: #2ecc71; }
+        .btn-promote:hover { background: #f2faf6; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>ADMIN PANEL</h3>
+        <a th:href="@{/admin/dashboard}">📊 Dashboard</a>
+        <a th:href="@{/admin/utilizatori}" class="active">👥 Utilizatori</a>
+        <a th:href="@{/admin/programari}">📅 Programări</a>
+        <a th:href="@{/admin/orar}">🕒 Orar Săptămânal</a>
+        <a th:href="@{/admin/cursuri}">📚 Cursuri & Lecții</a>
+        <hr style="opacity: 0.2;">
+        <a th:href="@{/}">⬅ Pagina Principală</a>
+        <a th:href="@{/login?logout}" style="color: #ff9999;">🚪 Ieșire</a>
+    </div>
+
+    <div class="main">
+        <h1>Gestiune Elevi & Mentori</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nume</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Acțiuni</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u : ${listaUtilizatori}">
+                    <td th:text="${u.id}">1</td>
+                    <td th:text="${u.nume}">Nume Prenume</td>
+                    <td th:text="${u.email}">email@exemplu.com</td>
+                    <td>
+                        <span th:if="${u.rol == 'ADMIN'}" class="badge badge-admin">ADMIN</span>
+                        <span th:if="${u.rol == 'MENTOR'}" class="badge badge-mentor">MENTOR</span>
+                        <span th:if="${u.rol == 'ELEV' or u.rol == null}" class="badge badge-elev">ELEV</span>
+                    </td>
+                    <td>
+                        <a th:if="${u.rol != 'ADMIN'}" 
+                           th:href="@{/admin/utilizatori/schimba-rol/{id}(id=${u.id})}" 
+                           class="btn-action btn-promote"
+                           th:text="${u.rol == 'MENTOR'} ? '⬇ Retrogradează' : '⬆ Promovează Mentor'">
+                        </a>
+                        
+                        <span th:if="${u.rol != 'ADMIN'}" style="color: #ccc;"> | </span>
+                        
+                        <a th:if="${u.rol != 'ADMIN'}" 
+                           th:href="@{/admin/utilizatori/sterge/{id}(id=${u.id})}" 
+                           class="btn-action btn-delete" 
+                           onclick="return confirm('ATENȚIE! Ești sigur că vrei să ștergi acest utilizator? Această acțiune este ireversibilă.')">
+                           <i class="fas fa-trash"></i> Șterge
+                        </a>
+
+                        <span th:if="${u.rol == 'ADMIN'}" style="color: #999; font-style: italic; font-size: 0.8rem;">Cont Protejat</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

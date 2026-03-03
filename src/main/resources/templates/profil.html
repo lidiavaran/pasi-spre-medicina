@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilul Meu - Pași Spre Medicină</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #800020; --bg: #f8f9fa; --success: #28a745; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; }
+        
+        .nav-back { padding: 20px 5%; background: white; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
+        .nav-back a { text-decoration: none; color: var(--primary); font-weight: 600; font-size: 0.9rem; }
+
+        .profile-container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        .profile-card { background: white; border-radius: 24px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); text-align: center; border: 1px solid #eee; }
+        
+        .avatar-large { 
+            width: 110px; height: 110px; background: #fff0f3; border-radius: 50%; 
+            margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; color: var(--primary); border: 4px solid white; box-shadow: 0 8px 20px rgba(128,0,32,0.15);
+        }
+
+        .info-row { display: flex; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid #f8f8f8; text-align: left; }
+        .info-label { color: #888; font-size: 0.9rem; font-weight: 400; }
+        .info-value { color: #222; font-weight: 600; }
+
+        .password-section { margin-top: 35px; text-align: left; padding-top: 25px; border-top: 2px dashed #eee; }
+        
+        .input-style {
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #ddd; 
+            margin-top: 12px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem;
+            transition: 0.3s;
+        }
+        .input-style:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(128,0,32,0.1); }
+
+        .btn-update { 
+            background: var(--primary); color: white; border: none; 
+            width: 100%; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; margin-top: 20px; font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(128,0,32,0.2);
+        }
+        .btn-update:hover { background: #600018; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(128,0,32,0.3); }
+
+        .alert-success {
+            background: #d4edda; color: #155724; padding: 12px; border-radius: 10px;
+            margin-top: 20px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-back">
+        <i class="fas fa-chevron-left" style="color: var(--primary);"></i>
+        <a th:href="@{/elev/dashboard/{id}(id=${user.id})}">Înapoi la Dashboard</a>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="avatar-large">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            
+            <h2 th:text="${user.nume}" style="margin: 0; color: #1a1a1a;">Nume Complet</h2>
+            <p th:text="${user.rol}" style="color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1.5px; margin-top: 5px;">Rol</p>
+
+            <div style="margin-top: 30px;">
+                <div class="info-row">
+                    <span class="info-label"><i class="far fa-envelope"></i> Email</span>
+                    <span class="info-value" th:text="${user.email}">email@mail.ro</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label"><i class="far fa-user"></i> Utilizator</span>
+                    <span class="info-value" th:text="${user.nume}">Nume</span>
+                </div>
+
+                <div class="info-row" th:if="${user.mentor != null}">
+                    <span class="info-label"><i class="fas fa-chalkboard-teacher"></i> Mentor</span>
+                    <span class="info-value" th:text="${user.mentor.nume}">Nume Mentor</span>
+                </div>
+            </div>
+
+            <div class="password-section">
+                <h3 style="font-size: 1.1rem; color: #1a1a1a; margin-bottom: 5px;">Securitate Cont</h3>
+                <p style="font-size: 0.85rem; color: #888; margin: 0;">Dorești să schimbi parola de acces?</p>
+                
+                <form th:action="@{/elev/profil/schimba-parola}" method="post">
+                    <input type="hidden" name="id" th:value="${user.id}">
+                    
+                    <input type="password" name="parolaNoua" class="input-style" 
+                           placeholder="Introdu parola nouă" required minlength="6">
+                    
+                    <button type="submit" class="btn-update">
+                        <i class="fas fa-key"></i> Actualizează Parola
+                    </button>
+                </form>
+
+                <div th:if="${param.success}" class="alert-success">
+                    <i class="fas fa-check-circle"></i> Parola a fost salvată cu succes!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="text-align: center; color: #bbb; font-size: 0.8rem; margin-top: 20px; padding-bottom: 40px;">
+        &copy; 2026 Pași Spre Medicină
+    </footer>
+
+</body>
+</html>

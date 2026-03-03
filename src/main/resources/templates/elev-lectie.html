@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${lectie.titlu} + ' - Pași Spre Medicină'"></title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --wine: #800020; --bg: #f8f9fa; --shadow: 0 15px 35px rgba(0,0,0,0.1); --success: #28a745; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; color: #333; }
+
+        .top-nav { 
+            background: white; padding: 15px 5%; display: flex; 
+            align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000;
+        }
+        .btn-back { 
+            color: var(--wine); text-decoration: none; font-weight: 600; 
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+        .btn-back:hover { transform: translateX(-5px); }
+
+        .content-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .lesson-card { background: white; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); }
+
+        /* Video Iframe */
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        .lesson-body { padding: 40px; }
+        .lesson-meta { 
+            display: inline-block; background: #fff0f3; color: var(--wine); 
+            padding: 5px 15px; border-radius: 8px; font-weight: 600; 
+            font-size: 0.75rem; text-transform: uppercase; margin-bottom: 20px; 
+        }
+        
+        .lesson-title { margin: 0 0 20px 0; color: #1a1a1a; font-size: 2.2rem; line-height: 1.2; }
+        .lesson-text { line-height: 1.8; color: #444; font-size: 1.1rem; white-space: pre-wrap; margin-bottom: 40px; }
+
+        /* Download Section */
+        .download-section {
+            background: #f8f9fa; border: 2px dashed #e0e0e0; border-radius: 20px;
+            padding: 25px; margin-top: 30px; display: flex; align-items: center;
+            justify-content: space-between; transition: 0.3s;
+        }
+        .download-section:hover { border-color: var(--wine); background: #fffcfd; }
+        .file-info { display: flex; align-items: center; gap: 15px; }
+        .file-icon { 
+            width: 50px; height: 50px; background: white; display: flex; 
+            align-items: center; justify-content: center; border-radius: 12px; 
+            color: var(--wine); font-size: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .btn-download { 
+            background: var(--wine); color: white; text-decoration: none; 
+            padding: 12px 25px; border-radius: 10px; font-weight: 600; 
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+
+        /* Complete Section */
+        .complete-section { margin-top: 50px; padding-top: 30px; border-top: 1px solid #eee; text-align: center; }
+        .btn-complete { 
+            background: var(--success); color: white; border: none; padding: 18px 50px; 
+            border-radius: 15px; font-weight: 600; font-size: 1.1rem; cursor: pointer; 
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(40,167,69,0.2);
+            display: inline-flex; align-items: center; gap: 10px;
+        }
+        .btn-complete:hover { background: #218838; transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            .lesson-body { padding: 25px; }
+            .lesson-title { font-size: 1.6rem; }
+            .download-section { flex-direction: column; text-align: center; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a th:href="@{/elev/curs/{id}(id=${lectie.curs.id}, elevId=${elev.id})}" class="btn-back">
+            <i class="fas fa-chevron-left"></i> Înapoi la listă
+        </a>
+        <div style="text-align: right;">
+            <span style="display: block; font-size: 0.7rem; color: #999; text-transform: uppercase;">Cursul curent</span>
+            <span style="font-weight: 600; color: #333;" th:text="${lectie.curs.titlu}">Nume Curs</span>
+        </div>
+    </nav>
+
+    <div class="content-container">
+        <article class="lesson-card">
+            
+            <div th:if="${lectie.linkMaterial != null && !lectie.linkMaterial.isEmpty()}" class="video-wrapper">
+                <iframe th:src="${lectie.linkMaterial.contains('watch?v=') ? lectie.linkMaterial.replace('watch?v=', 'embed/') : lectie.linkMaterial}" 
+                        allowfullscreen></iframe>
+            </div>
+
+            <div class="lesson-body">
+                <span class="lesson-meta">
+                    <i class="fas fa-graduation-cap"></i> 
+                    <span th:text="${lectie.tipFisier != null ? lectie.tipFisier : 'Lecție Activă'}">Lecție</span>
+                </span>
+                
+                <h1 class="lesson-title" th:text="${lectie.titlu}">Titlu Lecție</h1>
+                
+                <div class="lesson-text" th:text="${lectie.continut}">Conținut</div>
+
+                <div th:if="${lectie.numeFisier != null}" class="download-section">
+                    <div class="file-info">
+                        <div class="file-icon">
+                            <i th:class="${lectie.tipFisier != null && lectie.tipFisier.contains('video')} ? 'fas fa-file-video' : 'fas fa-file-pdf'"></i>
+                        </div>
+                        <div>
+                            <strong style="display: block; color: #222;" th:text="${lectie.numeFisier}">nume_fisier.pdf</strong>
+                            <span style="font-size: 0.85rem; color: #888;">Material atașat lecției</span>
+                        </div>
+                    </div>
+                    <a th:href="@{/elev/lectie/descarca/{id}(id=${lectie.id})}" class="btn-download">
+                        <i class="fas fa-cloud-download-alt"></i> Descarcă
+                    </a>
+                </div>
+
+                <div class="complete-section">
+                    <form th:action="@{/elev/lectie/finalizeaza}" method="post">
+                        <input type="hidden" name="lectieId" th:value="${lectie.id}">
+                        <input type="hidden" name="elevId" th:value="${elev.id}">
+                        
+                        <button type="submit" class="btn-complete">
+                            <i class="fas fa-check-circle"></i> Am parcurs această lecție
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <footer style="text-align: center; padding: 40px; color: #aaa; font-size: 0.8rem;">
+        &copy; 2026 Pași Spre Medicină
+    </footer>
+
+</body>
+</html>

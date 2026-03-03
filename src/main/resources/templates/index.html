@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pași spre Medicină | Start</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --visiniu: #800020; --alb: #ffffff; }
+        body { 
+            margin: 0; font-family: 'Poppins', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: 100vh; background: var(--alb); text-align: center;
+        }
+        .logo-main { width: 200px; margin-bottom: 30px; }
+        h1 { 
+            font-family: 'Montserrat', sans-serif; font-size: 3.5rem; 
+            color: var(--visiniu); text-transform: uppercase; letter-spacing: 5px; margin: 0;
+        }
+        .subtitle { font-size: 1.2rem; color: #555; margin-bottom: 50px; letter-spacing: 2px; }
+        
+        .btn-container { display: flex; flex-direction: column; gap: 20px; width: 320px; }
+        
+        .btn {
+            padding: 20px; border-radius: 50px; font-family: 'Montserrat', sans-serif;
+            font-weight: 800; text-transform: uppercase; text-decoration: none;
+            transition: 0.3s; letter-spacing: 1px;
+        }
+        .btn-new { background-color: var(--visiniu); color: white; border: 2px solid var(--visiniu); }
+        .btn-new:hover { background-color: transparent; color: var(--visiniu); }
+        
+        .btn-existing { background-color: transparent; color: var(--visiniu); border: 2px solid var(--visiniu); }
+        .btn-existing:hover { background-color: var(--visiniu); color: white; }
+        
+        .divider { font-weight: 600; color: #ccc; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <img src="/images/logo.png" alt="Logo" class="logo-main">
+    <h1>PAȘI SPRE MEDICINĂ</h1>
+    <p class="subtitle">Platforma ta de pregătire pentru admitere</p>
+
+    <div class="btn-container">
+        <a href="/cont-nou" class="btn btn-new">Creează cont nou</a>
+        <div class="divider">SAU</div>
+        <a href="/login" class="btn btn-existing">Am deja un cont</a>
+    </div>
+</body>
+</html>

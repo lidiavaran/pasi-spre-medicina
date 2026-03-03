@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula - Pași Spre Medicină</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --wine: #800020; --bg: #f8f9fa; --shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; color: #333; }
+
+        .aula-header { 
+            background: linear-gradient(135deg, var(--wine) 0%, #600018 100%); 
+            color: white; padding: 50px 5%; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            border-bottom: 5px solid rgba(255,255,255,0.1);
+        }
+        .nav-back a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+        .nav-back a:hover { color: white; }
+
+        .main-grid { 
+            display: grid; grid-template-columns: 1fr 350px; gap: 30px; 
+            max-width: 1200px; margin: -30px auto 50px; padding: 0 20px; 
+        }
+
+        .lectii-container { background: white; border-radius: 24px; padding: 35px; box-shadow: var(--shadow); }
+        
+        .lectie-item { 
+            display: flex; align-items: center; padding: 22px; border: 1px solid #eee; 
+            border-radius: 18px; margin-bottom: 15px; transition: 0.3s; text-decoration: none; color: inherit;
+        }
+        .lectie-item:hover { transform: translateX(10px); border-color: var(--wine); box-shadow: 0 5px 20px rgba(128,0,32,0.1); }
+        
+        .lectie-terminata { border-left: 6px solid #28a745 !important; background-color: #f8fff9; }
+
+        .lectie-icon { 
+            width: 55px; height: 55px; background: #fff0f3; border-radius: 15px; 
+            display: flex; align-items: center; justify-content: center; color: var(--wine); font-size: 1.6rem; margin-right: 20px; 
+        }
+        .icon-check { color: #28a745 !important; background: #e8f5e9 !important; }
+
+        .sidebar-card { 
+            background: white; border-radius: 24px; padding: 30px; box-shadow: var(--shadow); 
+            height: fit-content; position: sticky; top: 20px;
+        }
+        .mentor-info { text-align: center; }
+        .mentor-avatar { 
+            width: 90px; height: 90px; background: var(--wine); color: white; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; 
+            font-size: 2.2rem; border: 4px solid #fff5f5; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-contact { 
+            background: var(--wine); color: white; border: none; padding: 14px 20px; 
+            border-radius: 12px; font-weight: 600; cursor: pointer; display: block;
+            text-decoration: none; margin-top: 25px; transition: 0.3s;
+        }
+        .btn-contact:hover { background: #600018; transform: translateY(-2px); }
+
+        .tag { background: #f0f0f0; padding: 5px 12px; border-radius: 8px; font-size: 0.7rem; color: #666; font-weight: 600; text-transform: uppercase; }
+        .tag-video { background: #e3f2fd; color: #1565c0; }
+        .tag-pdf { background: #fff3e0; color: #e65100; }
+
+        .status-badge { font-size: 0.75rem; font-weight: 600; color: #28a745; margin-top: 5px; display: block; }
+
+        @media (max-width: 992px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .sidebar-card { position: static; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="aula-header">
+        <div class="nav-back">
+            <a th:href="@{/elev/dashboard/{id}(id=${elev.id})}">
+                <i class="fas fa-chevron-left"></i> Înapoi la Dashboard
+            </a>
+        </div>
+        <h1 th:text="${curs.titlu}" style="margin: 15px 0 5px 0; font-size: 2.2rem;">Titlu Curs</h1>
+        <p style="opacity: 0.9; font-weight: 300;">Explorează lecțiile tale și monitorizează-ți progresul.</p>
+    </header>
+
+    <div class="main-grid">
+        <div class="lectii-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="margin: 0; color: #1a1a1a;">Plan de studiu</h2>
+                <span style="font-size: 0.9rem; color: #666;">
+                    <i class="fas fa-book-open"></i> <span th:text="${#lists.size(lectiiAsignate)}">0</span> Lecții disponibile
+                </span>
+            </div>
+            
+            <div th:each="lectie : ${lectiiAsignate}">
+                <a th:href="@{/elev/lectie/{id}(id=${lectie.id}, elevId=${elev.id})}" 
+                   class="lectie-item"
+                   th:classappend="${terminate != null and terminate.contains(lectie.id)} ? 'lectie-terminata' : ''">
+                    
+                    <div class="lectie-icon" th:classappend="${terminate != null and terminate.contains(lectie.id)} ? 'icon-check' : ''">
+                        <i th:class="${terminate != null and terminate.contains(lectie.id)} ? 'fas fa-check' : 'fas fa-play'"></i>
+                    </div>
+
+                    <div style="flex-grow: 1;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                            <span class="tag" 
+                                  th:classappend="${lectie.tipFisier != null and lectie.tipFisier.contains('pdf')} ? 'tag-pdf' : 'tag-video'"
+                                  th:text="${lectie.tipFisier != null and lectie.tipFisier.contains('pdf') ? 'DOCUMENT PDF' : 'MATERIAL VIDEO'}">TIP</span>
+                        </div>
+                        <h4 th:text="${lectie.titlu}" style="margin: 0; font-size: 1.1rem; color: #333;">Titlu Lecție</h4>
+                        
+                        <span th:if="${terminate != null and terminate.contains(lectie.id)}" class="status-badge">
+                            <i class="fas fa-check-double"></i> Lecție finalizată
+                        </span>
+                    </div>
+                    
+                    <i class="fas fa-chevron-right" style="color: #ddd;"></i>
+                </a>
+            </div>
+
+            <div th:if="${#lists.isEmpty(lectiiAsignate)}" style="text-align: center; padding: 50px 20px;">
+                <i class="fas fa-lock" style="font-size: 3rem; color: #eee; margin-bottom: 15px;"></i>
+                <p style="color: #888;">Mentorul tău va debloca lecții în curând.</p>
+            </div>
+        </div>
+
+        <aside>
+            <div class="sidebar-card">
+                <div class="mentor-info">
+                    <div class="mentor-avatar">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3 style="margin: 0; color: #222;" th:text="${elev.mentor != null ? elev.mentor.nume : 'Echipa Suport'}">Nume Mentor</h3>
+                    <p style="color: var(--wine); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">
+                        Mentorul Tău
+                    </p>
+                    
+                    <div style="text-align: left; background: #fffcfc; border: 1px solid #fff0f3; padding: 15px; border-radius: 12px; margin-top: 20px;">
+                        <p style="font-size: 0.85rem; color: #555; line-height: 1.5; margin: 0;">
+                            <i class="fas fa-comment-medical" style="color: var(--wine);"></i> 
+                            Ai nelămuriri despre exerciții? Trimite-mi un mesaj pentru ajutor.
+                        </p>
+                    </div>
+
+                    <a th:href="${elev.mentor != null} ? 'mailto:' + ${elev.mentor.email} : 'mailto:contact@pasimedicina.ro'" class="btn-contact">
+                        <i class="far fa-envelope"></i> Contactează Mentorul
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <footer style="text-align: center; padding: 40px; color: #bbb; font-size: 0.8rem;">
+        &copy; 2026 Pași Spre Medicină
+    </footer>
+
+</body>
+</html>

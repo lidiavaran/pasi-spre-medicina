@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programări - Mentor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --main-color: #800020; 
+            --bg-light: #f8f9fa; 
+            --sidebar-width: 260px;
+            --input-border: #e2e8f0;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-light); margin: 0; display: flex; transition: all 0.3s; }
+        
+        /* --- SIDEBAR RESPONSIV --- */
+        .sidebar { 
+            width: var(--sidebar-width); background: linear-gradient(180deg, var(--main-color) 0%, #4a0012 100%);
+            min-height: 100vh; color: white; padding: 25px; box-sizing: border-box; position: fixed; z-index: 1000;
+        }
+        .sidebar h2 { font-size: 1.1rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 25px; }
+        .sidebar-menu a { color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 12px; transition: 0.3s; margin-bottom: 5px; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.15); color: white; }
+
+        /* --- CONTENT --- */
+        .content { flex: 1; padding: 40px; margin-left: var(--sidebar-width); box-sizing: border-box; }
+        
+        .header-title { margin-bottom: 30px; }
+        .header-title h1 { color: #2d3436; font-size: 1.8rem; margin: 0; }
+        .header-title p { color: #636e72; margin-top: 5px; }
+
+        .grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; align-items: start; }
+        
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #edf2f7; }
+        .section-title { font-weight: 600; color: var(--main-color); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* --- FORM STYLING --- */
+        label { display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: #4b6584; }
+        .form-control { 
+            width: 100%; padding: 12px 15px; border-radius: 10px; border: 2px solid var(--input-border); 
+            margin-bottom: 20px; font-family: inherit; box-sizing: border-box; transition: 0.3s;
+        }
+        .form-control:focus { border-color: var(--main-color); outline: none; background: #fffcfd; }
+        
+        .btn-submit { 
+            background: var(--main-color); color: white; border: none; padding: 15px; border-radius: 12px; 
+            cursor: pointer; font-weight: 600; width: 100%; font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(128,0,32,0.2); transition: 0.3s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(128,0,32,0.3); background: #600018; }
+        
+        /* --- LISTA SEDINTE --- */
+        .meeting-item { 
+            padding: 20px; border-radius: 15px; background: #fafbfc; border: 1px solid #f1f3f5;
+            margin-bottom: 15px; position: relative; transition: 0.3s;
+        }
+        .meeting-item:hover { border-color: var(--main-color); background: white; }
+        
+        .meeting-date { color: var(--main-color); font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 5px; }
+        .meeting-subject { font-size: 1rem; color: #2d3436; font-weight: 600; }
+        .meeting-student { display: block; font-size: 0.85rem; color: #636e72; margin-top: 5px; }
+
+        .btn-delete { 
+            background: #fff0f3; color: #ff4d4d; border: none; width: 35px; height: 35px;
+            border-radius: 10px; cursor: pointer; position: absolute; right: 15px; top: 15px;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .btn-delete:hover { background: #ff4d4d; color: white; }
+
+        /* --- RESPONSIVITATE --- */
+        @media (max-width: 1100px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; min-height: auto; position: relative; padding: 10px; }
+            .sidebar h2 { margin: 0; padding: 10px; border: none; }
+            .sidebar-menu { display: flex; overflow-x: auto; gap: 5px; }
+            .sidebar-menu a { white-space: nowrap; margin-bottom: 0; padding: 10px 15px; }
+            .content { margin-left: 0; padding: 20px; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Pasi spre Medicină</h2>
+        <div class="sidebar-menu">
+            <a href="/mentor/dashboard"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+            <a href="/mentor/sala-de-clasa"><i class="fas fa-user-friends"></i> <span>Sala de Clasă</span></a>
+            <a href="/mentor/programari" class="active"><i class="fas fa-calendar-plus"></i> <span>Programări</span></a>
+            <a href="/mentor/orar"><i class="fas fa-clock"></i> <span>Orarul Meu</span></a>
+            <a href="/mentor/cursuri"><i class="fas fa-book-open"></i> <span>Materiale</span></a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="header-title">
+            <h1>🗓️ Gestionare Programări</h1>
+            <p>Planifică ședințele noi și monitorizează calendarul viitor.</p>
+        </div>
+        
+		<div class="card">
+		    <div class="section-title"><i class="fas fa-plus-circle"></i> Creează o ședință nouă</div>
+		    <form th:action="@{/mentor/programare/noua}" method="post">
+		        <div style="margin-bottom: 20px;">
+		            <label><i class="fas fa-user"></i> Elevul</label>
+		            <select name="elevId" required class="form-control">
+		                <option value="">Alege elevul...</option>
+		                <option th:each="e : ${elevi}" th:value="${e.id}" th:text="${e.nume}"></option>
+		            </select>
+		        </div>
+
+		        <label><i class="fas fa-pen"></i> Subiectul lecției</label>
+		        <input type="text" name="subiect" placeholder="Ex: Anatomia inimii - Capitolul 3" class="form-control" required>
+		        
+		        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+		            <div>
+		                <label><i class="fas fa-calendar-alt"></i> Data și Ora</label>
+		                <input type="datetime-local" name="dataOra" required class="form-control">
+		            </div>
+		            <div>
+		                <label><i class="fas fa-video"></i> Link Meeting</label>
+		                <input type="url" name="linkMeeting" placeholder="https://meet.google.com/..." class="form-control">
+		            </div>
+		        </div>
+		        
+		        <button type="submit" class="btn-submit">
+		            <i class="fas fa-check-circle"></i> Lansează Programarea
+		        </button>
+		    </form>
+		</div>
+            <div class="card">
+                <div class="section-title"><i class="fas fa-hourglass-half"></i> Ședințe Viitoare</div>
+                
+                <div th:each="p : ${programari}" class="meeting-item">
+                    <span class="meeting-date" th:text="${#temporals.format(p.dataOra, 'dd MMMM, HH:mm')}">Data</span>
+                    <span class="meeting-subject" th:text="${p.subiect}">Subiect</span>
+                    <span class="meeting-student">
+                        <i class="far fa-user"></i> <span th:text="${p.elev.nume}">Nume Elev</span>
+                    </span>
+                    
+                    <form th:action="@{/mentor/programare/sterge/{id}(id=${p.id})}" method="post">
+                        <button type="submit" class="btn-delete" title="Anulează programarea" 
+                                onclick="return confirm('Ești sigur că vrei să ștergi această programare?')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div th:if="${#lists.isEmpty(programari)}" style="padding: 40px 20px; color: #b2bec3; text-align: center;">
+                    <i class="fas fa-calendar-day fa-3x" style="opacity: 0.2; margin-bottom: 15px;"></i>
+                    <p>Nu există programări în așteptare.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalii Curs - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #800020; --secondary: #2c3e50; --bg: #f4f7f6; --white: #ffffff; --text: #333; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); margin: 0; padding: 20px; color: var(--text); }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header-section { background: linear-gradient(135deg, var(--primary), #a31633); color: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .header-section h1 { margin: 0; font-size: 2.5rem; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .card { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h3 { border-bottom: 2px solid var(--bg); padding-bottom: 10px; margin-top: 0; color: var(--secondary); display: flex; align-items: center; gap: 10px; }
+        .item-list { list-style: none; padding: 0; }
+        .item-list li { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back { display: inline-block; margin-bottom: 20px; text-decoration: none; color: var(--primary); font-weight: 600; }
+        .lectie-link { text-decoration: none; color: var(--primary); font-weight: 600; font-size: 1.1rem; }
+        .lectie-link:hover { text-decoration: underline; color: #a31633; }
+        .badge { background: #e1f5fe; color: #01579b; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+        .mentor-info { background: #fff9c4; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #fbc02d; }
+        .mentor-name { display: block; font-weight: 600; color: #856404; margin-top: 5px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a th:href="@{/admin/cursuri}" class="btn-back">← Înapoi la gestiune</a>
+    
+    <div class="header-section">
+        <h1 th:text="${curs.titlu}">Nume Curs</h1>
+        <p th:text="${curs.descriere}">Descriere</p>
+    </div>
+
+    <div class="grid-container">
+		<div class="card">
+		    <h3>📚 Programa Cursului</h3>
+		    <p style="font-size: 0.8rem; color: #777;">Gestionați lecțiile și materialele atașate.</p>
+		    <ul class="item-list">
+				<li th:each="l : ${curs.lectii}">
+				    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+				        <div>
+				            <a th:href="@{/admin/lectii/vizualizare/{id}(id=${l.id})}" class="lectie-link">
+				                <i class="fas fa-book-open" style="margin-right: 8px;"></i>
+				                <span th:text="${l.titlu}">Titlu Lecție</span>
+				            </a>
+				            
+				            <span th:if="${l.numeFisier != null}" style="font-size: 0.8rem; color: #2e7d32; margin-left: 10px;">
+				                (📁 <span th:text="${l.numeFisier}"></span>)
+				            </span>
+				        </div>
+				        
+				        <a th:href="@{/admin/lectii/vizualizare/{id}(id=${l.id})}" 
+				           style="background: var(--primary); color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 0.85rem;">
+				           Deschide Lecția ➔
+				        </a>
+				    </div>
+				</li>
+		        <li th:if="${#lists.isEmpty(curs.lectii)}">Nu sunt lecții adăugate.</li>
+		    </ul>
+		</div>
+
+        <div class="card">
+            <h3>👥 Management Persoane</h3>
+            
+            <div class="mentor-info">
+                <strong>👨‍🏫 Mentori Alocați:</strong>
+                <div th:each="m : ${curs.mentori}">
+                    <span class="mentor-name" th:text="${m.nume}">Nume Mentor</span>
+                </div>
+                <span th:if="${#lists.isEmpty(curs.mentori)}" style="color: #999; font-style: italic;">Niciun mentor asociat</span>
+            </div>
+
+            <h4>Elevi Înscriși <span class="badge" th:text="${#lists.size(curs.elevi)}">0</span></h4>
+            <ul class="item-list">
+                <li th:each="e : ${curs.elevi}">
+                    <span th:text="${e.nume}">Nume Elev</span>
+                    <span style="color: #999; font-size: 0.75rem;">Activ</span>
+                </li>
+                <li th:if="${#lists.isEmpty(curs.elevi)}" style="color: #999;">Niciun elev înscris încă.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

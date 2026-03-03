@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala de Clasă - Pași Spre Medicină</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --main-color: #800020; 
+            --bg-light: #f8f9fa; 
+            --sidebar-width: 260px;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-light); margin: 0; display: flex; min-height: 100vh; }
+        
+        /* --- SIDEBAR RESPONSIV --- */
+        .sidebar { 
+            width: var(--sidebar-width); background: linear-gradient(180deg, var(--main-color) 0%, #4a0012 100%);
+            min-height: 100vh; color: white; padding: 25px; box-sizing: border-box; position: fixed; z-index: 1000;
+        }
+        .sidebar h2 { font-size: 1.1rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 25px; }
+        .sidebar-menu a { color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 12px; transition: 0.3s; margin-bottom: 5px; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.15); color: white; }
+
+        /* --- CONTENT --- */
+        .content { flex: 1; padding: 40px; margin-left: var(--sidebar-width); box-sizing: border-box; }
+        
+        .header-area { margin-bottom: 40px; }
+        .header-area h1 { font-size: 2rem; color: #2d3436; margin: 0; }
+        .header-area p { color: #636e72; margin-top: 5px; }
+
+        /* --- STUDENT GRID --- */
+        .student-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 25px; 
+        }
+        
+        .student-card { 
+            background: white; border-radius: 20px; padding: 25px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.02); 
+            border: 1px solid #edf2f7; transition: all 0.4s ease;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .student-card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 20px 40px rgba(128,0,32,0.08);
+            border-color: var(--main-color);
+        }
+        
+        .student-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .avatar-box { 
+            width: 55px; height: 55px; background: #fff0f3; border-radius: 15px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.4rem; color: var(--main-color);
+        }
+        
+        .student-details h3 { margin: 0; font-size: 1.15rem; color: #2d3436; }
+        .student-details p { margin: 4px 0 0 0; font-size: 0.85rem; color: #b2bec3; display: flex; align-items: center; gap: 5px; }
+
+        .btn-view-progress { 
+            margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px; background: #f8f9fa; border: 1px solid #f1f3f5; 
+            border-radius: 12px; color: var(--main-color); text-decoration: none; 
+            font-weight: 600; font-size: 0.9rem; transition: 0.3s;
+        }
+        .btn-view-progress:hover { background: var(--main-color); color: white; border-color: var(--main-color); }
+
+        /* --- RESPONSIVITATE --- */
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 20px 10px; }
+            .sidebar h2, .sidebar span { display: none; }
+            .content { margin-left: 80px; padding: 25px; }
+            .sidebar-menu a { justify-content: center; }
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; min-height: auto; position: relative; padding: 10px; }
+            .sidebar h2 { display: block; border: none; margin: 0; padding: 10px; }
+            .sidebar-menu { display: flex; overflow-x: auto; gap: 5px; }
+            .sidebar-menu a { white-space: nowrap; margin-bottom: 0; padding: 10px 15px; border-radius: 8px; }
+            .content { margin-left: 0; padding: 20px; }
+            .header-area h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Pasi spre Medicină</h2>
+        <div class="sidebar-menu">
+            <a href="/mentor/dashboard"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+            <a href="/mentor/sala-de-clasa" class="active"><i class="fas fa-user-friends"></i> <span>Sala de Clasă</span></a>
+            <a href="/mentor/programari"><i class="fas fa-calendar-plus"></i> <span>Programări</span></a>
+            <a href="/mentor/orar"><i class="fas fa-clock"></i> <span>Orarul Meu</span></a>
+            <a href="/mentor/cursuri"><i class="fas fa-book-open"></i> <span>Materiale</span></a>
+            
+            <form th:action="@{/logout}" method="post" style="margin-top: 20px;">
+                <button type="submit" style="background:none; border:none; color:#ffcccc; cursor:pointer; font-family:inherit; font-size:1rem; padding:14px 18px; display:flex; align-items:center; gap:12px; width: 100%;">
+                    <i class="fas fa-power-off"></i> <span class="logout-text">Ieșire</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="header-area">
+            <h1>👥 Sala de Clasă</h1>
+            <p>Gestionează portofoliul de elevi și urmărește evoluția lor individuală.</p>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(elevi)}" class="student-grid">
+            <div th:each="elev : ${elevi}" class="student-card">
+                <div class="student-header">
+                    <div class="avatar-box">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="student-details">
+                        <h3 th:text="${elev.nume}">Nume Elev</h3>
+                        <p><i class="far fa-envelope"></i> <span th:text="${elev.email}">email@elev.ro</span></p>
+                    </div>
+                </div>
+                
+                <a th:href="@{'/mentor/elev/detalii/' + ${elev.id}}" class="btn-view-progress">
+                    <span>Vezi Profil Complet</span> <i class="fas fa-chevron-right" style="font-size: 0.8rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(elevi)}" style="text-align: center; margin-top: 80px; padding: 60px; background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+            <div style="font-size: 4rem; color: #dfe6e9; margin-bottom: 20px;">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h2 style="color: #b2bec3; font-weight: 600;">Niciun elev în listă</h2>
+            <p style="color: #b2bec3; max-width: 400px; margin: 0 auto;">Momentan nu ai elevi asignați. Verifică secțiunea de "Programări" sau contactează administratorul.</p>
+        </div>
+    </div>
+
+</body>
+</html>

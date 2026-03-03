@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Înscrie Elev Nou - Pași Spre Medicină</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { margin: 0; font-family: 'Poppins', sans-serif; display: flex; height: 100vh; background: #f4f7f6; }
+        
+        /* Sidebar Vișiniu (Identic cu Dashboard) */
+        .sidebar { width: 280px; background: #800020; color: white; padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; position: fixed; height: 100%; }
+        .sidebar h2 { font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px; text-align: center; margin-top: 0; }
+        .sidebar-menu { list-style: none; padding: 0; margin-top: 20px; flex-grow: 1; }
+        .sidebar-menu a { color: rgba(255,255,255,0.8); text-decoration: none; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.3s; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.1); color: white; }
+        .sidebar-menu i { margin-right: 10px; width: 20px; text-align: center; }
+
+        /* Conținut */
+        .content { flex: 1; padding: 40px; margin-left: 280px; display: flex; flex-direction: column; align-items: center; }
+        
+        .form-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 550px; border-top: 5px solid #800020; }
+        .form-card h2 { color: #800020; margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 0.9rem; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
+        input { width: 100%; padding: 12px 12px 12px 45px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family: inherit; transition: 0.3s; }
+        input:focus { border-color: #800020; outline: none; box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.1); }
+
+        .btn-submit { background: #800020; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: 600; font-size: 1rem; margin-top: 10px; transition: 0.3s; }
+        .btn-submit:hover { background: #600018; transform: translateY(-2px); }
+
+        /* Mesaj de succes */
+        .alert-success { background: #d4edda; color: #155724; padding: 15px; border-radius: 10px; margin-bottom: 25px; width: 100%; max-width: 550px; display: flex; align-items: center; gap: 10px; border-left: 5px solid #28a745; }
+
+        .logout-btn { background: none; border: none; color: #ffcccb; cursor: pointer; font-family: inherit; font-size: inherit; width: 100%; text-align: left; padding: 12px 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>ADMIN PANEL<br><span style="font-size: 0.8rem; font-weight: 400; opacity: 0.7;">Pași Spre Medicină</span></h2>
+        <ul class="sidebar-menu">
+            <li><a href="/admin/dashboard"><i class="fas fa-chart-line"></i> Dashboard General</a></li>
+            <li><a href="/admin/utilizatori/nou" class="active"><i class="fas fa-user-plus"></i> Înscrie Elev Nou</a></li>
+            <li><a href="/admin/utilizatori"><i class="fas fa-users"></i> Gestiune Utilizatori</a></li>
+            <li><a href="/admin/programari"><i class="fas fa-calendar-alt"></i> Programări Meditații</a></li>
+            <li><a href="/admin/cursuri"><i class="fas fa-book-open"></i> Cursuri & Lecții</a></li>
+            
+            <li style="margin-top: 50px;">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Ieșire în Siguranță
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <div class="content">
+        
+        <div th:if="${param.succes}" class="alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span>Contul elevului a fost creat cu succes și parola a fost criptată!</span>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-graduation-cap"></i> Înregistrare Elev</h2>
+            <p style="color: #777; font-size: 0.9rem; margin-bottom: 30px;">Introdu datele noului elev. Acesta va avea acces automat la secțiunea de cursuri.</p>
+
+			<form th:action="@{/admin/utilizatori/salveaza}" th:object="${utilizator}" method="post">
+			    <div class="form-group">
+			        <label>Nume și Prenume Elev</label>
+			        <div class="input-wrapper">
+			            <i class="fas fa-user"></i>
+			            <input type="text" th:field="*{nume}" placeholder="Ex: Popescu Ionuț" required>
+			        </div>
+			    </div>
+
+			    <div class="form-group">
+			        <label>Adresa de Email (va fi folosită la login)</label>
+			        <div class="input-wrapper">
+			            <i class="fas fa-envelope"></i>
+			            <input type="email" th:field="*{email}" placeholder="email@exemplu.com" required>
+			        </div>
+			    </div>
+
+			    <div class="form-group">
+			        <label>Parolă Temporară</label>
+			        <div class="input-wrapper">
+			            <i class="fas fa-lock"></i>
+			            <input type="text" th:field="*{parola}" placeholder="Minim 6 caractere" required>
+			        </div>
+			        <small style="color: #888; font-size: 0.8rem;">Comunică-i elevului această parolă după înscriere.</small>
+			    </div>
+
+			    <div class="form-group">
+			        <label>Asignează un Mentor (Opțional)</label>
+			        <div class="input-wrapper">
+			            <i class="fas fa-chalkboard-teacher" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+			            <select name="mentorId" style="width: 100%; padding: 12px 12px 12px 45px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; background: white;">
+			                <option value="">-- Fără mentor momentan --</option>
+			                <option th:each="m : ${listaMentori}" th:value="${m.id}" th:text="${m.nume}"></option>
+			            </select>
+			        </div>
+			    </div>
+			    <button type="submit" class="btn-submit">Creează Contul de Elev</button>
+			</form>Creează Contul de Elev</button>
+            </form>
+        </div>
+        
+        <a href="/admin/dashboard" style="margin-top: 20px; color: #800020; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+            <i class="fas fa-arrow-left"></i> Înapoi la Dashboard
+        </a>
+    </div>
+
+</body>
+</html>

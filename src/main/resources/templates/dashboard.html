@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Pași Spre Medicină</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { margin: 0; font-family: 'Poppins', sans-serif; display: flex; height: 100vh; background: #f4f7f6; }
+        
+        /* Sidebar Vișiniu */
+        .sidebar { width: 280px; background: #800020; color: white; padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; position: fixed; height: 100%; }
+        .sidebar h2 { font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px; text-align: center; letter-spacing: 1px; margin-top: 0; }
+        .sidebar-menu { list-style: none; padding: 0; margin-top: 20px; flex-grow: 1; }
+        .sidebar-menu li { margin-bottom: 5px; }
+        .sidebar-menu a { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 500; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.3s; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.1); color: white; padding-left: 20px; }
+        .sidebar-menu i { margin-right: 10px; width: 20px; text-align: center; }
+        
+        /* Zona de conținut */
+        .content { flex: 1; padding: 40px; margin-left: 280px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .stat-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border-bottom: 4px solid #800020; transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card h3 { margin: 0; color: #888; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card p { margin: 15px 0 0; font-size: 2.2rem; font-weight: 600; color: #333; }
+        
+        /* Quick Actions */
+        .quick-actions { margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .action-box { background: #fff; padding: 25px; border-radius: 15px; display: flex; align-items: center; text-decoration: none; color: #333; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.2s; border: 1px solid #eee; }
+        .action-box:hover { border-color: #800020; background: #fff9fa; transform: scale(1.02); }
+        .action-icon { font-size: 2rem; margin-right: 20px; }
+        .action-text h4 { margin: 0; color: #800020; }
+        .action-text p { margin: 5px 0 0; font-size: 0.85rem; color: #666; }
+
+        .logout-btn { background: none; border: none; color: #ffcccb; cursor: pointer; font-family: inherit; font-size: inherit; width: 100%; text-align: left; padding: 12px 15px; display: flex; align-items: center; }
+        .logout-btn i { margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>ADMIN PANEL<br><span style="font-size: 0.8rem; font-weight: 400; opacity: 0.7;">Pași Spre Medicină</span></h2>
+        <ul class="sidebar-menu">
+            <li><a th:href="@{/admin/dashboard}" class="active"><i class="fas fa-chart-line"></i> Dashboard General</a></li>
+            <li><a th:href="@{/admin/orar}"><i class="fas fa-clock"></i> Orar Săptămânal</a></li>
+            <li><a th:href="@{/admin/utilizatori/nou}"><i class="fas fa-user-plus"></i> Înscrie Elev Nou</a></li>
+            <li><a th:href="@{/admin/utilizatori}"><i class="fas fa-users"></i> Gestiune Utilizatori</a></li>
+            <li><a th:href="@{/admin/programari}"><i class="fas fa-calendar-alt"></i> Programări Meditații</a></li>
+            <li><a th:href="@{/admin/cursuri}"><i class="fas fa-book-open"></i> Cursuri & Lecții</a></li>
+            
+            <li style="margin-top: 50px;">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Ieșire în Siguranță
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <h1>Bună ziua, Lidia!</h1>
+            <span id="current-date" style="color: #666; font-weight: 500;"></span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Utilizatori</h3>
+                <p th:text="${totalUtilizatori}">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Cursuri Înregistrate</h3>
+                <p th:text="${totalCursuri}">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Programări Active</h3>
+                <p th:text="${totalProgramari}">0</p>
+            </div>
+        </div>
+        
+        <h2 style="margin-top: 50px;">Acțiuni Rapide</h2>
+        <div class="quick-actions">
+            
+            <a th:href="@{/admin/utilizatori/nou}" class="action-box">
+                <span class="action-icon">👤➕</span>
+                <div class="action-text">
+                    <h4>Înscrie Elev Nou</h4>
+                    <p>Creează un cont nou și adaugă-l la un curs.</p>
+                </div>
+            </a>
+
+            <a th:href="@{/admin/programari}" class="action-box">
+                <span class="action-icon">🕒</span>
+                <div class="action-text">
+                    <h4>Creează Meditație</h4>
+                    <p>Alocă un elev la un mentor și stabilește ora.</p>
+                </div>
+            </a>
+
+            <a th:href="@{/admin/utilizatori}" class="action-box">
+                <span class="action-icon">👥</span>
+                <div class="action-text">
+                    <h4>Gestionează Utilizatori</h4>
+                    <p>Vezi lista completă și modifică permisiunile.</p>
+                </div>
+            </a>
+
+            <a th:href="@{/admin/cursuri}" class="action-box">
+                <span class="action-icon">📚</span>
+                <div class="action-text">
+                    <h4>Cursuri & Lecții</h4>
+                    <p>Administrează materiile și materialele didactice.</p>
+                </div>
+            </a>
+            
+            <a th:href="@{/admin/orar}" class="action-box">
+                <span class="action-icon">🗓️</span>
+                <div class="action-text">
+                    <h4>Vezi Orarul</h4>
+                    <p>Verifică vizual programul săptămânal.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('ro-RO', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+    </script>
+
+</body>
+</html>

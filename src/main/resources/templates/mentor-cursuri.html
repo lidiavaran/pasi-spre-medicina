@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materiale Curs - Mentor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --wine: #800020; 
+            --wine-light: #a52a2a;
+            --bg: #f8f9fa; 
+            --sidebar-width: 260px;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; display: flex; transition: all 0.3s; }
+        
+        /* --- SIDEBAR RESPONSIV (Aceeași structură ca la Dashboard) --- */
+        .sidebar { 
+            width: var(--sidebar-width); 
+            background: linear-gradient(180deg, var(--wine) 0%, #4a0012 100%);
+            min-height: 100vh; color: white; padding: 25px; position: fixed; z-index: 1000;
+        }
+        .sidebar h2 { font-size: 1.1rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+        .sidebar a { 
+            color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; gap: 12px; 
+            padding: 14px 18px; border-radius: 12px; transition: 0.3s; margin-bottom: 8px; 
+        }
+        .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.15); color: white; }
+
+        /* --- CONTINUT --- */
+        .main { flex: 1; margin-left: var(--sidebar-width); padding: 40px; box-sizing: border-box; }
+        
+        .header-title { margin-bottom: 40px; }
+        .header-title h1 { color: #2d3436; font-size: 2rem; margin-bottom: 10px; }
+        .header-title p { color: #636e72; }
+
+        /* --- GRID CURSURI --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        
+        .card { 
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.02); transition: all 0.4s ease;
+            border: 1px solid #edf2f7; display: flex; flex-direction: column;
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(128,0,32,0.08); }
+        
+        .card-banner { height: 8px; background: var(--wine); }
+        .card-body { padding: 30px; flex-grow: 1; }
+        .card h3 { margin: 0 0 15px 0; color: #2d3436; font-size: 1.25rem; }
+        .card p { font-size: 0.9rem; color: #636e72; line-height: 1.6; margin-bottom: 25px; }
+
+        .btn-view { 
+            background: var(--wine); color: white; text-decoration: none; 
+            padding: 12px 20px; border-radius: 10px; display: flex; align-items: center; 
+            justify-content: center; gap: 8px; font-weight: 600; font-size: 0.9rem;
+            transition: 0.3s; width: fit-content;
+        }
+        .btn-view:hover { background: var(--wine-light); box-shadow: 0 5px 15px rgba(128,0,32,0.3); }
+
+        /* --- RESPONSIVITATE --- */
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 15px 10px; }
+            .sidebar h2, .sidebar span { display: none; }
+            .main { margin-left: 80px; padding: 25px; }
+            .sidebar a { justify-content: center; }
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; min-height: auto; position: relative; padding: 10px; }
+            .sidebar h2 { display: block; border: none; margin: 0; padding: 10px; }
+            .sidebar-menu { display: flex; overflow-x: auto; gap: 5px; }
+            .sidebar-menu a { white-space: nowrap; margin-bottom: 0; padding: 10px 15px; border-radius: 8px; }
+            .main { margin-left: 0; padding: 20px; }
+            .header-title h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Pasi spre Medicină</h2>
+        <div class="sidebar-menu">
+            <a th:href="@{/mentor/dashboard}"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+            <a th:href="@{/mentor/sala-de-clasa}"><i class="fas fa-user-friends"></i> <span>Sala de Clasă</span></a>
+            <a th:href="@{/mentor/programari}"><i class="fas fa-calendar-alt"></i> <span>Programări</span></a>
+            <a th:href="@{/mentor/orar}"><i class="fas fa-clock"></i> <span>Orarul Meu</span></a>
+            <a th:href="@{/mentor/cursuri}" class="active"><i class="fas fa-book-open"></i> <span>Materiale Curs</span></a>
+            <form th:action="@{/logout}" method="post" style="margin-top: 20px;">
+                <button type="submit" style="background:none; border:none; color:#ffcccc; cursor:pointer; font-family:inherit; padding: 14px 18px; display: flex; align-items: center; gap: 12px; width: 100%;">
+                    <i class="fas fa-power-off"></i> <span class="logout-text">Ieșire</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="header-title">
+            <h1>📚 Toate Cursurile</h1>
+            <p>Accesează orice curs din programă pentru a adăuga sau modifica lecții.</p>
+        </div>
+
+        <div class="grid">
+            <div th:each="c : ${listaCursuri}" class="card">
+                <div class="card-banner"></div>
+                <div class="card-body">
+                    <h3 th:text="${c.titlu}">Titlu Curs</h3>
+                    <p th:text="${c.descriere != null and #strings.length(c.descriere) > 120 ? #strings.substring(c.descriere,0,120) + '...' : c.descriere}">
+                        Descriere curs...
+                    </p>
+                    <a th:href="@{/mentor/cursuri/detalii/{id}(id=${c.id})}" class="btn-view">
+                        <i class="fas fa-edit"></i> Gestionează Materiale
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(listaCursuri)}" style="text-align: center; margin-top: 80px; background: white; padding: 60px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+            <i class="fas fa-book-reader fa-4x" style="color: #dfe6e9; margin-bottom: 20px;"></i>
+            <h2 style="color: #b2bec3;">Încă nu sunt cursuri create</h2>
+            <p style="color: #b2bec3;">Contactează administratorul pentru a genera programa.</p>
+        </div>
+    </div>
+</body>
+</html>

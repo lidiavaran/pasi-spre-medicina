@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Orar Meditații - Pași Spre Medicină</title>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/ro.js'></script>
+    
+    <style>
+        :root { --main-color: #800020; --bg-light: #f4f7f6; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; display: flex; background: var(--bg-light); height: 100vh; }
+        
+        /* Sidebar Stilizat */
+        .sidebar { width: 280px; background: var(--main-color); color: white; padding: 25px; box-sizing: border-box; position: fixed; height: 100vh; }
+        .sidebar h2 { font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px; text-align: center; margin-top: 0; }
+        .sidebar-menu { list-style: none; padding: 0; margin-top: 20px; }
+        .sidebar-menu a { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 500; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.3s; margin-bottom: 5px; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.1); color: white; }
+        .sidebar-menu i { margin-right: 10px; width: 20px; text-align: center; }
+
+        .content { flex: 1; padding: 40px; margin-left: 280px; overflow-y: auto; }
+        
+        #calendar {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+        
+        /* Customizare FullCalendar */
+        .fc-toolbar-title { color: var(--main-color); text-transform: capitalize; font-weight: 600 !important; }
+        .fc-button-primary { background-color: var(--main-color) !important; border-color: var(--main-color) !important; transition: 0.3s; }
+        .fc-button-primary:hover { background-color: #600018 !important; }
+        .fc-event { cursor: pointer; border: none !important; padding: 3px; border-radius: 4px; }
+        .fc-v-event { background-color: var(--main-color) !important; }
+        .fc-event-main { font-size: 0.85rem; font-weight: 500; }
+        
+        h1 { color: #333; margin-top: 0; margin-bottom: 25px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>ADMIN PANEL<br><span style="font-size: 0.8rem; font-weight: 400; opacity: 0.7;">Pași Spre Medicină</span></h2>
+        <div class="sidebar-menu">
+            <a th:href="@{/admin/dashboard}"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a th:href="@{/admin/utilizatori}"><i class="fas fa-users"></i> Utilizatori</a>
+            <a th:href="@{/admin/programari}"><i class="fas fa-calendar-alt"></i> Programări</a>
+            <a th:href="@{/admin/cursuri}"><i class="fas fa-book"></i> Cursuri & Lecții</a>
+            <a th:href="@{/admin/orar}" class="active"><i class="fas fa-clock"></i> Orar Săptămânal</a>
+            <hr style="opacity: 0.1; margin: 20px 0;">
+            <a th:href="@{/admin/dashboard}"><i class="fas fa-arrow-left"></i> Înapoi la Dashboard</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <h1>🕒 Orar Săptămânal Meditații</h1>
+        
+        <div id='calendar'></div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            locale: 'ro',
+            firstDay: 1, // Săptămâna începe cu Luni
+            allDaySlot: false,
+            slotMinTime: '08:00:00',
+            slotMaxTime: '21:00:00',
+            expandRows: true,
+            height: 'auto',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'timeGridWeek,timeGridDay'
+            },
+            // Endpoint-ul care returnează JSON-ul cu programările
+            events: '/admin/api/programari',
+            
+            eventClick: function(info) {
+                if (info.event.url) {
+                    window.open(info.event.url, "_blank");
+                    info.jsEvent.preventDefault();
+                }
+            },
+            eventDidMount: function(info) {
+                
+                info.el.title = info.event.title;
+            }
+        });
+        calendar.render();
+      });
+    </script>
+</body>
+</html>

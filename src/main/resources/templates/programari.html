@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Management Meditații - Pași Spre Medicină</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --main-color: #800020; --bg-light: #f4f7f6; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-light); margin: 0; display: flex; }
+        
+        .sidebar { width: 280px; background: var(--main-color); min-height: 100vh; color: white; padding: 25px; box-sizing: border-box; position: fixed; }
+        .sidebar h2 { font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px; text-align: center; margin-top: 0; }
+        .sidebar-menu { list-style: none; padding: 0; margin-top: 20px; }
+        .sidebar-menu a { color: rgba(255,255,255,0.8); text-decoration: none; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.3s; margin-bottom: 5px; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.1); color: white; }
+        .sidebar-menu i { margin-right: 10px; width: 20px; text-align: center; }
+
+        .content { flex: 1; padding: 40px; margin-left: 280px; }
+        .header { margin-bottom: 30px; }
+        
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+        label { font-weight: 600; margin-bottom: 5px; color: #444; font-size: 0.9rem; }
+        select, input { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.9rem; }
+        
+        .btn-add { background: var(--main-color); color: white; border: none; padding: 15px; border-radius: 8px; 
+                   cursor: pointer; font-weight: 600; width: 100%; transition: 0.3s; margin-top: 10px; font-size: 1rem; }
+        .btn-add:hover { background: #600018; transform: translateY(-2px); }
+
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; margin-top: 10px; }
+        th { background: #f8f9fa; color: var(--main-color); padding: 15px; text-align: left; border-bottom: 2px solid #eee; }
+        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .meeting-link { color: #007bff; text-decoration: none; font-weight: 600; }
+        .btn-delete { color: #ff4d4d; text-decoration: none; font-weight: 600; font-size: 0.85rem; }
+
+        .logout-btn { background: none; border: none; color: #ffcccb; cursor: pointer; font-family: inherit; font-size: inherit; width: 100%; text-align: left; padding: 12px 15px; display: flex; align-items: center; }
+        .logout-btn i { margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>ADMIN PANEL<br><span style="font-size: 0.8rem; font-weight: 400; opacity: 0.7;">Pași Spre Medicină</span></h2>
+        <div class="sidebar-menu">
+            <a th:href="@{/admin/dashboard}"><i class="fas fa-chart-line"></i> Dashboard General</a>
+            <a th:href="@{/admin/orar}"><i class="fas fa-clock"></i> Orar Săptămânal</a>
+            <a th:href="@{/admin/utilizatori/nou}"><i class="fas fa-user-plus"></i> Înscrie Elev Nou</a>
+            <a th:href="@{/admin/utilizatori}"><i class="fas fa-users"></i> Gestiune Utilizatori</a>
+            <a th:href="@{/admin/programari}" class="active"><i class="fas fa-calendar-alt"></i> Programări Ședințe</a>
+            <a th:href="@{/admin/cursuri}"><i class="fas fa-book-open"></i> Cursuri & Lecții</a>
+            
+            <form th:action="@{/logout}" method="post" style="margin-top: 50px;">
+                <button type="submit" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Ieșire în Siguranță
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <h1>📅 Programare Meditații</h1>
+            <p style="color: #666;">Aici poți aloca elevii către mentori și stabili link-urile de curs.</p>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top:0; color: var(--main-color);">Creează o întâlnire nouă</h3>
+            <form th:action="@{/admin/programari/salveaza}" method="post">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Elev</label>
+						<select name="elevId" required>
+						    <option value="">-- Alege Elev --</option>
+						    <option th:each="e : ${listaElevi}" th:value="${e.id}" th:text="${e.nume}"></option>
+						</select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mentor / Admin</label>
+						<select name="mentorId" required>
+						    <option value="">-- Alege Mentor --</option>
+						    <option th:each="m : ${listaMentori}" th:value="${m.id}" th:text="${m.nume}"></option>
+						</select>
+                    </div>
+                    <div class="form-group">
+                        <label>Subiect Meditație</label>
+                        <input type="text" name="subiect" placeholder="ex: Anatomia Inimii" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Data și Ora</label>
+                        <input type="datetime-local" name="dataOra" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Link Meeting (Zoom/Meet)</label>
+                    <input type="url" name="linkMeeting" placeholder="https://meet.google.com/..." required>
+                </div>
+                <button type="submit" class="btn-add"><i class="fas fa-save"></i> Salvează Programarea</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top:0; color: var(--main-color);">Ședințe în curs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Elev</th>
+                        <th>Mentor</th>
+                        <th>Subiect</th>
+                        <th>Dată & Oră</th>
+                        <th>Link</th>
+                        <th>Acțiuni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${listaProgramari}">
+                        <td th:text="${p.elev != null ? p.elev.nume : 'Fără Elev'}" style="font-weight: 600;">Nume Elev</td>
+                        <td th:text="${p.mentor != null ? p.mentor.nume : 'Fără Mentor'}">Nume Mentor</td>
+                        <td th:text="${p.subiect}">Subiect</td>
+                        <td th:text="${p.dataOra != null ? #temporals.format(p.dataOra, 'dd-MM-yyyy HH:mm') : 'Dată lipsă'}">Data</td>
+                        <td>
+                            <a th:if="${p.linkMeeting != null}" th:href="${p.linkMeeting}" class="meeting-link" target="_blank">
+                                <i class="fas fa-video"></i> Link
+                            </a>
+                        </td>
+                        <td>
+                            <a th:href="@{'/admin/programari/sterge/' + ${p.id}}" 
+                               class="btn-delete"
+                               onclick="return confirm('Ești sigur că vrei să ștergi această programare?')">
+                                <i class="fas fa-trash"></i> Șterge
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

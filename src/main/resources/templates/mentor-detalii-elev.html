@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Elev - Pași Spre Medicină</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --main-color: #800020; 
+            --bg-light: #f8f9fa; 
+            --success: #2ecc71; 
+            --sidebar-width: 260px;
+            --gold: #D4AF37;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-light); margin: 0; display: flex; }
+        
+        .sidebar { 
+            width: var(--sidebar-width); background: linear-gradient(180deg, var(--main-color) 0%, #4a0012 100%);
+            min-height: 100vh; color: white; padding: 25px; box-sizing: border-box; position: fixed;
+        }
+        .sidebar h2 { font-size: 1.1rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+        .sidebar a { color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 12px; transition: 0.3s; }
+        .sidebar a:hover { background: rgba(255,255,255,0.15); color: white; }
+
+        .content { flex: 1; padding: 40px; margin-left: var(--sidebar-width); }
+        
+        .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 35px; }
+        .back-btn { background: white; color: var(--main-color); text-decoration: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+        .grid-container { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #edf2f7; margin-bottom: 25px; }
+        .section-title { font-weight: 600; color: #2d3436; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        /* Stiluri Progres Cursuri */
+        .curs-progres-card { background: #fffcfc; border: 1px solid #fff0f3; padding: 15px; border-radius: 15px; margin-bottom: 10px; }
+        .progress-bar-container { background: #eee; border-radius: 20px; height: 10px; margin: 10px 0; overflow: hidden; }
+        .progress-bar-fill { background: var(--success); height: 100%; transition: 1s; }
+
+        .plan-mini-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 15px; margin-bottom: 15px; border-left: 4px solid var(--gold); }
+        .file-link { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; text-decoration: none; padding: 5px 10px; border-radius: 5px; margin-top: 5px; }
+        .file-elev { color: var(--success); background: #e8fdf0; border: 1px solid #c3e6cb; }
+
+        .btn-assign { background: var(--success); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; cursor: pointer; font-weight: 600; margin-top: 10px; }
+        .btn-plan { background: var(--gold); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; cursor: pointer; font-weight: 600; margin-top: 10px; }
+        .form-select, .form-control { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #edf2f7; margin-bottom: 10px; box-sizing: border-box; }
+
+        .status-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .status-done { background: #e8fdf0; color: #2ecc71; }
+        .status-pending { background: #fff0f3; color: var(--main-color); }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Pasi spre Medicină</h2>
+        <div class="sidebar-menu">
+            <a href="/mentor/dashboard"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+            <a href="/mentor/sala-de-clasa"><i class="fas fa-user-friends"></i> <span>Sala de Clasă</span></a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="header-section">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="/mentor/sala-de-clasa" class="back-btn"><i class="fas fa-chevron-left"></i></a>
+                <h1 style="margin: 0;">Elev: <span th:text="${elev.nume}" style="color: var(--main-color);">Nume</span></h1>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            
+            <div class="sticky-side">
+                <div class="card">
+                    <div class="section-title"><i class="fas fa-chart-pie"></i> Progres Cursuri (Real)</div>
+                    <div th:each="curs : ${elev.cursuri}" class="curs-progres-card">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600;">
+                            <span th:text="${curs.titlu}">Curs</span>
+                            <span th:text="${procenteCursuri.get(curs.id) + '%'}">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" th:style="'width:' + ${procenteCursuri.get(curs.id)} + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title"><i class="fas fa-plus-circle"></i> Asignează Lecție</div>
+                    <form th:action="@{/mentor/elev/asigneaza-lectie}" method="post">
+                        <input type="hidden" name="elevId" th:value="${elev.id}">
+                        <select name="lectieId" class="form-select" required>
+                            <option value="">-- Alege lecția --</option>
+                            <option th:each="l : ${toateLectiile}" th:value="${l.id}" th:text="${l.titlu}"></option>
+                        </select>
+                        <button type="submit" class="btn-assign">Adaugă Lecție</button>
+                    </form>
+                </div>
+
+                <div class="card" style="border-top: 4px solid var(--gold);">
+                    <div class="section-title"><i class="fas fa-tasks" style="color: var(--gold);"></i> Plan de Studiu Nou</div>
+                    <form th:action="@{/mentor/program-studiu/salveaza}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="elevId" th:value="${elev.id}">
+                        <input type="text" name="titlu" placeholder="Titlu Sarcina" class="form-control" required>
+                        <textarea name="descriere" placeholder="Instrucțiuni..." class="form-control" style="height: 60px;" required></textarea>
+                        <input type="file" name="fisierSarcina" class="form-control" style="font-size: 0.8rem;">
+                        <input type="date" name="dataLimita" class="form-control" required>
+                        <button type="submit" class="btn-plan">Trimite Plan</button>
+                    </form>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="section-title"><i class="fas fa-list-check"></i> Status Lecții Individuale</div>
+                    
+                    <div th:if="${#lists.isEmpty(progrese)}" style="text-align: center; padding: 30px; color: #ccc;">
+                        Elevul nu are încă lecții deblocate.
+                    </div>
+
+                    <div th:each="p : ${progrese}" style="padding: 15px; border-bottom: 1px solid #f1f1f1; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong th:text="${p.lectie.titlu}" style="color: #333;">Lecție</strong>
+                            <div style="font-size: 0.75rem; color: #999;" th:text="${p.lectie.curs.titlu}">Curs</div>
+                        </div>
+                        <span th:class="${p.procentCompletat == 100 ? 'status-pill status-done' : 'status-pill status-pending'}">
+                            <i th:class="${p.procentCompletat == 100 ? 'fas fa-check' : 'fas fa-clock'}"></i>
+                            <span th:text="${p.procentCompletat == 100 ? 'Finalizată' : 'În lucru'}">Status</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title"><i class="fas fa-history"></i> Istoric Planuri de Studiu</div>
+					<div th:each="prog : ${programeSetate}" class="plan-mini-card">
+					    <div style="display: flex; justify-content: space-between;">
+					        <strong th:text="${prog.titlu}">Titlu</strong>
+					        <div>
+					            <span style="font-size: 0.75rem; color: #666; margin-right: 10px;" th:text="${prog.dataLimita}">Data</span>
+					            <a th:href="@{/mentor/program-studiu/sterge/{id}(id=${prog.id})}" 
+					               onclick="return confirm('Ești sigur că vrei să ștergi acest plan?')"
+					               style="color: #ff4d4d; text-decoration: none;">
+					               <i class="fas fa-trash"></i>
+					            </a>
+					        </div>
+					    </div>
+						<div th:each="prog : ${programeSetate}" class="plan-mini-card">
+						   
+						    
+						    <p style="font-size: 0.85rem; color: #555; margin: 10px 0;" th:text="${prog.descriere}">Descriere...</p>
+
+						    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #eee;">
+						        <div th:if="${prog.numeFisierRaspuns != null}">
+						            <span style="font-size: 0.75rem; color: #2ecc71; font-weight: 600;">
+						                <i class="fas fa-check-circle"></i> Elevul a trimis un fișier:
+						            </span>
+						            <br>
+						            <a th:href="@{/mentor/program-studiu/descarca-raspuns/{id}(id=${prog.id})}" class="file-link file-elev">
+						                <i class="fas fa-file-download"></i> 
+						                <span th:text="${prog.numeFisierRaspuns}">tema_elev.pdf</span>
+						            </a>
+						        </div>
+						        
+						        <div th:if="${prog.numeFisierRaspuns == null}">
+						            <span style="font-size: 0.75rem; color: #999; font-style: italic;">
+						                <i class="fas fa-hourglass-half"></i> Elevul nu a încărcat încă niciun fișier.
+						            </span>
+						        </div>
+						    </div>
+						</div>
+					</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
